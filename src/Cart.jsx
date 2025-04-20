@@ -61,19 +61,43 @@ const Cart = ({ isOpen, onClose, loggedUser, setLoggedUser }) => {
   const handleCheckout = async () => {
     try {
       const userId = loggedUser.id;
-      const newPurchased = [...(loggedUser.purchased || []), ...cart];
-
+      const userRes = await axios.get(`http://localhost:3000/users/${userId}`);
+      const userData = userRes.data;
+      const cartItems = userData.cart || [];
+  
+      for (let item of cartItems) {
+        // Get latest product data
+        const productRes = await axios.get(`http://localhost:3000/products/${item.id}`);
+        const productData = productRes.data;
+  
+        const newCount = productData.count - item.quantity;
+        if (newCount < 0) {
+          alert(`Not enough stock for ${item.title}`);
+          return;
+        }
+  
+        // Update the product count
+        await axios.patch(`http://localhost:3000/products/${item.id}`, {
+          count: newCount,
+        });
+      }
+  
+      // Move cart to purchased
+      const updatedPurchased = [...(userData.purchased || []), ...cartItems];
+  
+      // Clear cart
       await axios.patch(`http://localhost:3000/users/${userId}`, {
         cart: [],
-        purchased: newPurchased,
+        purchased: updatedPurchased,
       });
-
-      setCart([]);
-      setLoggedUser((prev) => ({ ...prev, cart: [], purchased: newPurchased }));
+  
+      window.location.reload();
     } catch (error) {
       console.error("Checkout error:", error);
+   
     }
   };
+  
 
   return (
     <div className="fixed top-0 right-0 w-96 h-full bg-white shadow-lg p-6 overflow-y-auto z-50">

@@ -18,9 +18,10 @@ const Products = ({ loggedUser, setLoggedUser }) => {
 
   useEffect(() => {
     axios
-      .get("https://fakestoreapi.com/products?limit=8")
+      .get("http://localhost:3000/products")
       .then((res) => {
         setProducts(res.data);
+        console.log(res.data);
         setLoading(false);
       })
       .catch((error) => {
@@ -87,13 +88,15 @@ const Products = ({ loggedUser, setLoggedUser }) => {
                   </div>
                 </CardBody>
                 <CardFooter className="mt-2 text-center">
-                  <Button
-                    variant="outlined"
-                    className="rounded-full border-2 px-6 py-2"
-                    onClick={() => setSelectedProduct(product)}
-                  >
-                    Choose options
-                  </Button>
+                <Button
+  variant="outlined"
+  disabled={product.count === 0}
+  className="rounded-full border-2 px-6 py-2"
+  onClick={() => setSelectedProduct(product)}
+>
+  {product.count === 0 ? "Out of Stock" : "add to cart"}
+</Button>
+
                 </CardFooter>
               </Card>
             ))

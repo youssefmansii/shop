@@ -14,24 +14,41 @@ const ProductModal = ({ product, onClose,loggedUser }) => {
 
   const handleAddToCart = async () => {
     try {
-      const userId = 1; // static user ID
-      const response = await axios.get(`http://localhost:3000/users/${loggedUser.id}`);
+      const userId = loggedUser.id;
+      const productRes = await axios.get(`http://localhost:3000/products/${product.id}`);
+      const liveProduct = productRes.data;
+  
+      if (liveProduct.count <= 0) {
+        alert("This product is out of stock.");
+        return;
+      }
+  
+      const response = await axios.get(`http://localhost:3000/users/${userId}`);
       const userData = response.data;
       let updatedCart = userData.cart || [];
-
+  
       const existingItem = updatedCart.find((item) => item.id === product.id);
-
+  
       if (existingItem) {
+        const newQuantity = existingItem.quantity + quantity;
+        if (newQuantity > liveProduct.count) {
+          alert(`Only ${liveProduct.count} items left in stock.`);
+          return;
+        }
         updatedCart = updatedCart.map((item) =>
           item.id === product.id
             ? {
                 ...item,
-                quantity: item.quantity + quantity,
-                total: item.price * (item.quantity + quantity),
+                quantity: newQuantity,
+                total: product.price * newQuantity,
               }
             : item
         );
       } else {
+        if (quantity > liveProduct.count) {
+          alert(`Only ${liveProduct.count} items available.`);
+          return;
+        }
         updatedCart.push({
           ...product,
           quantity,
@@ -39,14 +56,18 @@ const ProductModal = ({ product, onClose,loggedUser }) => {
           size: selectedSize,
         });
       }
-
-      await axios.patch(`http://localhost:3000/users/${loggedUser.id}`, { cart: updatedCart });
+  
+      await axios.patch(`http://localhost:3000/users/${userId}`, {
+        cart: updatedCart,
+      });
+  
       onClose();
+      window.location.reload();
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
-    window.location.reload();
   };
+  
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">

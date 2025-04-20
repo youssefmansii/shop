@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { Typography } from "@material-tailwind/react";
 import Cart from "./Cart";
@@ -6,12 +6,12 @@ import { Button, Card, CardBody, CardFooter } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const Home = ({loggedUser,setLoggedUser}) => {
+const Home = ({ loggedUser, setLoggedUser }) => {
   const [cartOpen, setCartOpen] = useState(false);
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    axios.get("https://fakestoreapi.com/products?limit=2").then((res) => {
+    axios.get("http://localhost:3000/products").then((res) => {
       setProducts(res.data);
     });
   }, []);
@@ -20,16 +20,26 @@ const Home = ({loggedUser,setLoggedUser}) => {
 
   return (
     <div className="relative min-h-screen">
-      
-      <Cart isOpen={cartOpen} onClose={() => setCartOpen(false)} loggedUser={loggedUser} setLoggedUser={setLoggedUser} />
+      <Cart
+        isOpen={cartOpen}
+        onClose={() => setCartOpen(false)}
+        loggedUser={loggedUser}
+        setLoggedUser={setLoggedUser}
+      />
 
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white">
         <div className="w-screen h-screen" />
         <div className="flex flex-col items-center justify-center w-full h-full">
-          <Typography variant="h1" className="text-4xl md:text-6xl font-bold text-center leading-tight mb-6">
+          <Typography
+            variant="h1"
+            className="text-4xl md:text-6xl font-bold text-center leading-tight mb-6"
+          >
             CHECK WINTER
           </Typography>
-          <Typography variant="h1" className="text-4xl md:text-6xl font-bold text-center leading-tight mb-10">
+          <Typography
+            variant="h1"
+            className="text-4xl md:text-6xl font-bold text-center leading-tight mb-10"
+          >
             COLLECTION
           </Typography>
           <Button
@@ -45,10 +55,15 @@ const Home = ({loggedUser,setLoggedUser}) => {
 
       <div className="w-full bg-[#f6f6f6] px-6 py-16">
         <div className="max-w-6xl mx-auto">
-          <Typography variant="h4" className="mb-8 font-bold text-black">Featured Products</Typography>
+          <Typography variant="h4" className="mb-8 font-bold text-black">
+            Featured Products
+          </Typography>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {products.map((product) => (
-              <Card key={product.id} className="rounded-2xl border border-gray-300 bg-white p-6">
+            {products.slice(0, 2).map((product) => (
+              <Card
+                key={product.id}
+                className="rounded-2xl border border-gray-300 bg-white p-6"
+              >
                 <div className="relative">
                   <img
                     src={product.image}
@@ -60,17 +75,25 @@ const Home = ({loggedUser,setLoggedUser}) => {
                   </span>
                 </div>
                 <CardBody>
-                  <Typography variant="h6" className="text-black font-semibold mb-2">
+                  <Typography
+                    variant="h6"
+                    className="text-black font-semibold mb-2"
+                  >
                     {product.title}
                   </Typography>
-                  <Typography variant="small" className="text-gray-500 uppercase tracking-widest">
+                  <Typography
+                    variant="small"
+                    className="text-gray-500 uppercase tracking-widest"
+                  >
                     KRACKED STUDIOS
                   </Typography>
                   <div className="mt-2">
                     <span className="line-through text-gray-400 mr-2">
                       LE {(product.price * 1.2).toFixed(2)}
                     </span>
-                    <span className="text-lg font-bold text-black">LE {product.price}</span>
+                    <span className="text-lg font-bold text-black">
+                      LE {product.price}
+                    </span>
                   </div>
                 </CardBody>
                 <CardFooter className="text-center">

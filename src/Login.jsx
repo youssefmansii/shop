@@ -1,4 +1,3 @@
-// src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
@@ -18,7 +17,10 @@ const Login = () => {
 
       if (foundUser) {
         localStorage.setItem("userId", foundUser.id);
-        navigate("/");
+        const isAdmin = foundUser.role === "admin";
+        localStorage.setItem("isAdmin", isAdmin);
+        navigate(isAdmin ? "/admin" : "/");
+        window.location.reload();
       } else {
         setError("Invalid email or password.");
       }
@@ -26,7 +28,6 @@ const Login = () => {
       console.error(err);
       setError("Login failed. Please try again.");
     }
-    window.location.reload();
   };
 
   return (

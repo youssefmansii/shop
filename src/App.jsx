@@ -12,6 +12,7 @@ import axios from "axios";
 import ProtectedRoute from "./ProtectedRoute";
 import Profile from "./Profile";
 import Contact from "./Contact";
+import NotFound from "./NotFound";
 
 
 
@@ -96,6 +97,7 @@ const App = () => {
         />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );
